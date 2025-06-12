@@ -1,0 +1,16 @@
+{
+  "name": "crosshair",
+  "namespace": true,
+  "package-specs": {
+    "in-source": true,
+    "module": "esmodule"
+  },
+  "suffix": ".res.js",
+  "sources": "src",
+  "bs-dependencies": [
+    "@rescript/core"
+  ],
+  "bsc-flags": [
+    "-open RescriptCore"
+  ]
+}
