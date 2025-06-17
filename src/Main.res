@@ -1,6 +1,10 @@
-let left = Browser.Document.getElementById("left")
-let right = Browser.Document.getElementById("right")
-let top = Browser.Document.getElementById("right")
-let bottom = Browser.Document.getElementById("right")
+let getEl = id =>
+  switch Browser.Document.getElementById(id) {
+  | Null.Null => panic(`element #${id} not found`)
+  | Null.Value(el) => el
+  }
 
-Console.log4(left, right, top, bottom)
+let left = getEl("left")
+let right = getEl("right")
+let top = getEl("top")
+let bottom = getEl("bottom")

@@ -3,5 +3,5 @@ module Element = {
 }
 
 module Document = {
-  @scope("document") external getElementById: string => nullable<Element.t> = "getElementById"
+  @scope("document") external getElementById: string => null<Element.t> = "getElementById"
 }
