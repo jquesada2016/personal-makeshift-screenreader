@@ -41,12 +41,40 @@ let drawRight = (
   right->Browser.Element.setStyle("right", "0")
 }
 
+let drawTop = (~top, ~mousePos: Command.position, ~lineThickness, ~gap) => {
+  let xMousePos = mousePos.x->Int.toString
+  let yMousePos = mousePos.y->Int.toString
+  let lineThicknessOffset = (lineThickness /. 2.0)->Float.toString
+  let lineThickness = lineThickness->Float.toString
+  let gap = gap->Float.toString
+
+  top->Browser.Element.setStyle("left", `calc(${xMousePos}px - ${lineThicknessOffset}rem)`)
+  top->Browser.Element.setStyle("width", `${lineThickness}rem`)
+  top->Browser.Element.setStyle("height", `calc(${yMousePos}px - ${gap}rem)`)
+}
+
+let drawBottom = (
+  ~bottom,
+  ~mousePos: Command.position,
+  ~windowSize: Tauri.Window.physicalSize,
+  ~lineThickness,
+  ~gap,
+) => {
+  let xMousePos = mousePos.x->Int.toString
+  let yMousePos = mousePos.y->Int.toString
+  let height = (windowSize.height - mousePos.y)->Int.toString
+  let lineThicknessOffset = (lineThickness /. 2.0)->Float.toString
+  let lineThickness = lineThickness->Float.toString
+  let gap = gap->Float.toString
+
+  bottom->Browser.Element.setStyle("left", `calc(${xMousePos}px - ${lineThicknessOffset}rem)`)
+  bottom->Browser.Element.setStyle("width", `${lineThickness}rem`)
+  bottom->Browser.Element.setStyle("height", `calc(${height}px - ${gap}rem)`)
+  bottom->Browser.Element.setStyle("bottom", "0")
+}
+
 let main = async () => {
   let window = Tauri.Window.getCurrentWindow()
-
-  let size = await window->Tauri.Window.innerSize
-  let pos = await window->Tauri.Window.innerPosition
-  let mousePos = await Command.getMousePosition()
 
   while true {
     await Async.requestAnimationFrame()
@@ -57,6 +85,8 @@ let main = async () => {
 
     drawLeft(~left, ~mousePos, ~gap, ~lineThickness)
     drawRight(~right, ~mousePos, ~windowSize, ~lineThickness, ~gap)
+    drawTop(~top, ~mousePos, ~gap, ~lineThickness)
+    drawBottom(~bottom, ~mousePos, ~windowSize, ~lineThickness, ~gap)
   }
 }
 
