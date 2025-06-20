@@ -4,27 +4,28 @@
   "version": "0.1.0",
   "identifier": "com.jquesada2016.crosshair.app",
   "build": {
-    "frontendDist": "../src",
-    "beforeDevCommand": "npm run build",
+    "devUrl": "http://localhost:5173",
+    "frontendDist": "../build",
+    "beforeDevCommand": "npm run build:res && npm run dev",
     "beforeBuildCommand": "npm run build"
   },
   "app": {
-    "withGlobalTauri": true,
     "macOSPrivateApi": true,
     "windows": [
       {
         "title": "crosshair",
         "width": 800,
         "height": 600,
+        "fullscreen": true,
         "transparent": true,
-        "zoomHotkeysEnabled": false
+        "zoomHotkeysEnabled": false,
+        "focus": false
       }
     ],
     "security": {
       "capabilities": [
         "default"
-      ],
-      "csp": null
+      ]
     }
   },
   "bundle": {

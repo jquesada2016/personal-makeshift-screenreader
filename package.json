@@ -5,12 +5,20 @@
   "type": "module",
   "scripts": {
     "tauri": "tauri",
-    "build": "rescript build",
+    "build": "rescript build && vite build",
+    "build:res": "rescript build",
+    "dev": "vite dev",
     "dev:res": "rescript -w"
   },
   "devDependencies": {
     "@rescript/core": "^1.6.1",
+    "@tailwindcss/vite": "^4.1.10",
     "@tauri-apps/cli": "^2",
-    "rescript": "^11.1.4"
+    "daisyui": "^5.0.43",
+    "rescript": "^11.1.4",
+    "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.5.0"
   }
 }
