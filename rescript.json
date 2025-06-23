@@ -7,8 +7,13 @@
   },
   "suffix": ".res.js",
   "sources": "src",
+  "jsx": {
+    "mode": "automatic",
+    "version": 4
+  },
   "bs-dependencies": [
-    "@rescript/core"
+    "@rescript/core",
+    "@rescript/react"
   ],
   "bsc-flags": [
     "-open RescriptCore"

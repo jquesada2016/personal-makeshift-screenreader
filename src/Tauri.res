@@ -14,4 +14,6 @@ module Window = {
 
   @send external innerPosition: t => promise<physicalPosition> = "innerPosition"
   @send external innerSize: t => promise<physicalSize> = "innerSize"
+  @send external outerSize: t => promise<physicalSize> = "outerSize"
+  @send external scaleFactor: t => promise<float> = "scaleFactor"
 }

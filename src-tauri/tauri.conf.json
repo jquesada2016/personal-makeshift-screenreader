@@ -10,16 +10,27 @@
     "beforeBuildCommand": "npm run build"
   },
   "app": {
+    "withGlobalTauri": true,
     "macOSPrivateApi": true,
     "windows": [
       {
         "title": "crosshair",
-        "width": 800,
-        "height": 600,
-        "fullscreen": true,
+        "label": "crosshair",
+        "url": "/crosshair.html",
+        "maximized": true,
         "transparent": true,
+        "decorations": false,
+        "alwaysOnTop": true,
+        "visibleOnAllWorkspaces": true,
         "zoomHotkeysEnabled": false,
-        "focus": false
+        "focus": false,
+        "visible": false
+      },
+      {
+        "title": "Preferences",
+        "label": "preferences",
+        "url": "/preferences.html",
+        "center": true
       }
     ],
     "security": {
