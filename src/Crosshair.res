@@ -85,11 +85,6 @@ let main = async () => {
     let lineThickness = 1.5
     let gap = 8.0
 
-    // let mousePos: Command.position = {
-    //   x: ((mousePos.x :> float) *. scaleFactor)->Float.toInt,
-    //   y: ((mousePos.y :> float) *. scaleFactor)->Float.toInt,
-    // }
-
     drawLeft(~left, ~mousePos, ~gap, ~lineThickness)
     drawRight(~right, ~mousePos, ~windowSize, ~lineThickness, ~gap, ~scaleFactor)
     drawTop(~top, ~mousePos, ~gap, ~lineThickness)
