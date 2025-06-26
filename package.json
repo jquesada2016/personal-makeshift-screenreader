@@ -5,23 +5,17 @@
   "type": "module",
   "scripts": {
     "tauri": "tauri",
-    "build": "rescript build && vite build",
-    "build:res": "rescript build",
-    "dev": "vite dev",
-    "dev:res": "rescript -w"
+    "build": "rescript build",
+    "dev": "vite dev"
   },
   "devDependencies": {
-    "@rescript/core": "^1.6.1",
-    "@rescript/react": "^0.13.1",
     "@tailwindcss/vite": "^4.1.10",
     "@tauri-apps/cli": "^2",
     "daisyui": "^5.0.43",
-    "rescript": "^11.1.4",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vite-gleam": "^0.4.3"
   },
   "dependencies": {
-    "@tauri-apps/api": "^2.5.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "@tauri-apps/api": "^2.5.0"
   }
 }

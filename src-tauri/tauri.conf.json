@@ -5,8 +5,8 @@
   "identifier": "com.jquesada2016.crosshair.app",
   "build": {
     "devUrl": "http://localhost:5173",
-    "frontendDist": "../build",
-    "beforeDevCommand": "npm run build:res && npm run dev",
+    "frontendDist": "../dist",
+    "beforeDevCommand": "gleam build && npm run dev",
     "beforeBuildCommand": "npm run build"
   },
   "app": {
