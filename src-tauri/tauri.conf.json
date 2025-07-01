@@ -1,42 +1,28 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "crosshair",
+  "productName": "Crosshair",
   "version": "0.1.0",
-  "identifier": "com.jquesada2016.crosshair.app",
+  "identifier": "com.dinocorp.crosshair",
   "build": {
-    "devUrl": "http://localhost:5173",
-    "frontendDist": "../build",
-    "beforeDevCommand": "npm run build:res && npm run dev",
-    "beforeBuildCommand": "npm run build"
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../build"
   },
   "app": {
-    "withGlobalTauri": true,
     "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "crosshair",
-        "label": "crosshair",
-        "url": "/crosshair.html",
-        "maximized": true,
-        "transparent": true,
-        "decorations": false,
-        "alwaysOnTop": true,
-        "visibleOnAllWorkspaces": true,
-        "zoomHotkeysEnabled": false,
-        "focus": false,
-        "visible": false
-      },
-      {
-        "title": "Preferences",
-        "label": "preferences",
-        "url": "/preferences.html",
+        "label": "settings",
+        "title": "Settings",
+        "url": "/settings",
+        "width": 800,
+        "height": 600,
         "center": true
       }
     ],
     "security": {
-      "capabilities": [
-        "default"
-      ]
+      "csp": null
     }
   },
   "bundle": {
