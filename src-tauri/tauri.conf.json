@@ -27,17 +27,12 @@
         "visible": false
       },
       {
-        "title": "Preferences",
-        "label": "preferences",
-        "url": "/preferences.html",
+        "title": "Settings",
+        "label": "settings",
+        "url": "/settings.html",
         "center": true
       }
-    ],
-    "security": {
-      "capabilities": [
-        "default"
-      ]
-    }
+    ]
   },
   "bundle": {
     "active": true,
