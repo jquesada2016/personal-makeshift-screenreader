@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate tracing;
 
-mod settings;
+mod page;
 
 use tracing_subscriber::prelude::*;
 use wasm_bindgen::prelude::*;
