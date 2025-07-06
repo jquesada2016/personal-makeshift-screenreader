@@ -1,21 +1,19 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Settings</title>
-
-  <link rel="stylesheet" href="./styles.css">
-  <script type="module">
-    import { settings } from "/src/Page.res.js";
-
-    settings();
-  </script>
+  <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
-  <div id="app"></div>
+  <script type="module">
+    import init, { start_settings } from "/wasm/pkg/wasm.js";
+
+    init().then(() => start_settings());
+  </script>
 </body>
 
 </html>
