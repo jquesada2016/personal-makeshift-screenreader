@@ -19,7 +19,6 @@ pub fn run() {
 
             let store = app
                 .store_builder("settings.json")
-                .create_new()
                 .default("settings", default_json_settings())
                 .build()
                 .expect("failed to building settings store");
