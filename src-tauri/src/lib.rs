@@ -1,7 +1,5 @@
-use std::str::FromStr;
-
 use tauri::Manager;
-use tauri_plugin_global_shortcut::{GlobalShortcut, GlobalShortcutExt};
+use tauri_plugin_global_shortcut::{GlobalShortcut, GlobalShortcutExt, ShortcutState};
 use tauri_plugin_store::{Store, StoreExt};
 use wasm::settings::{Settings, Shortcuts};
 
@@ -11,6 +9,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_store::Builder::new().build())
+        .invoke_handler(tauri::generate_handler![])
         .setup(|app| {
             let crosshair_window = app
                 .get_webview_window("crosshair")
@@ -62,19 +61,12 @@ fn register_shortcuts<R: tauri::Runtime>(
     } = shortcuts;
 
     shortcuts_manager
-        .on_shortcut(show_settings.as_str(), |app, _, _| {
-            let settings_window = app.get_webview_window("settings").unwrap_or_else(|| {
-                tauri::WebviewWindow::builder(
-                    app,
-                    "settings",
-                    tauri::WebviewUrl::App("/settings.html".into()),
-                )
-                .title("Settings")
-                .center()
-                .inner_size(800.0, 600.0)
-                .build()
-                .unwrap()
-            });
+        .on_shortcut(show_settings.as_str(), |app, _, e| {
+            if e.state == ShortcutState::Released {
+                return;
+            }
+
+            let settings_window = get_settings_window(app);
 
             settings_window.show().unwrap();
             settings_window.set_focus().unwrap();
@@ -82,31 +74,79 @@ fn register_shortcuts<R: tauri::Runtime>(
         .unwrap();
 
     shortcuts_manager
-        .on_shortcut(show_crosshair.as_str(), |app, _, _| {
-            let crosshair_window = app.get_webview_window("crosshair").unwrap_or_else(|| {
-                tauri::WebviewWindow::builder(
-                    app,
-                    "crosshair",
-                    tauri::WebviewUrl::App("/crosshair.html".into()),
-                )
-                .title("Crosshair")
-                .maximized(true)
-                .transparent(true)
-                .decorations(false)
-                .always_on_top(true)
-                .visible_on_all_workspaces(true)
-                .visible(false)
-                .build()
-                .unwrap()
-            });
+        .on_shortcut(show_crosshair.as_str(), |app, _, e| {
+            if e.state == ShortcutState::Released {
+                return;
+            }
 
-            crosshair_window.set_ignore_cursor_events(true).unwrap();
+            let crosshair_window = get_crosshair_window(app);
 
             if crosshair_window.is_visible().unwrap() {
                 crosshair_window.hide().unwrap();
             } else {
-                crosshair_window.show().unwrap()
+                crosshair_window.show().unwrap();
+                crosshair_window
+                    .set_position(tauri::PhysicalPosition::<i32>::from((0, 0)))
+                    .unwrap();
+                crosshair_window.maximize().unwrap();
             }
         })
         .unwrap();
+
+    #[cfg(debug_assertions)]
+    shortcuts_manager
+        .on_shortcut("Cmd + Ctrl + Alt + C", |app, _, e| {
+            if e.state == ShortcutState::Released {
+                return;
+            }
+
+            let crosshair_window = get_crosshair_window(app);
+
+            if crosshair_window.is_devtools_open() {
+                crosshair_window.close_devtools();
+                crosshair_window.set_ignore_cursor_events(true).unwrap();
+            } else {
+                crosshair_window.open_devtools();
+                crosshair_window.set_ignore_cursor_events(false).unwrap();
+            }
+        })
+        .unwrap();
+}
+
+fn get_settings_window<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::WebviewWindow<R> {
+    app.get_webview_window("settings").unwrap_or_else(|| {
+        tauri::WebviewWindow::builder(
+            app,
+            "settings",
+            tauri::WebviewUrl::App("/settings.html".into()),
+        )
+        .title("Settings")
+        .center()
+        .inner_size(800.0, 600.0)
+        .build()
+        .unwrap()
+    })
+}
+
+fn get_crosshair_window<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::WebviewWindow<R> {
+    app.get_webview_window("crosshair").unwrap_or_else(|| {
+        let crosshair_window = tauri::WebviewWindow::builder(
+            app,
+            "crosshair",
+            tauri::WebviewUrl::App("/crosshair.html".into()),
+        )
+        .title("Crosshair")
+        .maximized(true)
+        .transparent(true)
+        .decorations(false)
+        .always_on_top(true)
+        .visible_on_all_workspaces(true)
+        .visible(false)
+        .build()
+        .unwrap();
+
+        crosshair_window.set_ignore_cursor_events(false).unwrap();
+
+        crosshair_window
+    })
 }

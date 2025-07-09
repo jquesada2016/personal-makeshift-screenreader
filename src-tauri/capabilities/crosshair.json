@@ -1,0 +1,16 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "crosshair",
+  "description": "Permissions for the crosshair window",
+  "windows": [
+    "crosshair"
+  ],
+  "permissions": [
+    "core:event:allow-listen",
+    "core:window:allow-cursor-position",
+    "core:window:allow-scale-factor",
+    "core:window:default",
+    "store:allow-get-store",
+    "store:allow-get"
+  ]
+}

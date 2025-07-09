@@ -1,4 +1,4 @@
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Settings {
     pub line_thickness: f32,
     pub pointer_gap: f32,
@@ -15,7 +15,7 @@ impl Default for Settings {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Shortcuts {
     pub show_settings: String,
     pub show_crosshair: String,

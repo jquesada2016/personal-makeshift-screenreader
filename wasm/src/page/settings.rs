@@ -4,6 +4,8 @@ use wasm_bindgen::prelude::*;
 #[instrument]
 #[wasm_bindgen]
 pub fn start_settings() {
+    info!("starting settings page");
+
     mount_to_body(Settings);
 }
 

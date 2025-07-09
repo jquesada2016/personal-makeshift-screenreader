@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en" class="bg-transparent">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crosshair</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <script type="module">
+    import init, { start_crosshair } from "/wasm/pkg/wasm.js";
+
+    init().then(() => start_crosshair());
+  </script>
+</body>
+
+</html>
