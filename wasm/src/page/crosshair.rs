@@ -23,26 +23,7 @@ fn Crosshair() -> impl IntoView {
     let top = NodeRef::<html::Div>::new();
     let bottom = NodeRef::<html::Div>::new();
 
-    leptos::task::spawn_local(async move {
-        use tauri::store::Store;
-
-        let settings_store = Store::get("settings.json").await.unwrap();
-
-        let settings = settings_store.get_key("settings").await;
-        let settings = serde_wasm_bindgen::from_value(settings).unwrap();
-
-        set_settings.set(Some(settings));
-
-        let f = Closure::new(move |settings| {
-            let settings = serde_wasm_bindgen::from_value(settings).unwrap();
-
-            set_settings.set(Some(settings));
-        });
-
-        settings_store.on_key_change("settings", &f).await.unwrap();
-
-        f.forget();
-    });
+    subscribe_to_settings_changes(set_settings);
 
     Effect::new(move || {
         let left = left.get();
@@ -66,6 +47,32 @@ fn Crosshair() -> impl IntoView {
         <div node_ref=bottom class="fixed bg-gradient-to-t from-black to-white text-5xl font-bold p-4 text-white" />
       </main>
     }
+}
+
+fn subscribe_to_settings_changes<S>(set_settings: S)
+where
+    S: Set<Value = Option<Settings>> + 'static,
+{
+    use tauri::store::Store;
+
+    leptos::task::spawn_local(async move {
+        let settings_store = Store::get("settings.json").await.unwrap();
+
+        let settings = settings_store.get_key("settings").await;
+        let settings = serde_wasm_bindgen::from_value(settings).unwrap();
+
+        set_settings.set(Some(settings));
+
+        let f = Closure::new(move |settings| {
+            let settings = serde_wasm_bindgen::from_value(settings).unwrap();
+
+            set_settings.set(Some(settings));
+        });
+
+        settings_store.on_key_change("settings", &f).await.unwrap();
+
+        f.forget();
+    });
 }
 
 async fn run_crosshair_loop<S>(
