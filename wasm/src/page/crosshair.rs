@@ -1,5 +1,6 @@
 mod fut;
 
+use crate::{settings::subscribe_to_settings_changes, tauri};
 use fut::request_animation_frame;
 use leptos::{html, prelude::*};
 use wasm_bindgen::prelude::*;
@@ -47,32 +48,6 @@ fn Crosshair() -> impl IntoView {
         <div node_ref=bottom class="fixed bg-gradient-to-t from-black to-white text-5xl font-bold p-4 text-white" />
       </main>
     }
-}
-
-fn subscribe_to_settings_changes<S>(set_settings: S)
-where
-    S: Set<Value = Option<Settings>> + 'static,
-{
-    use tauri::store::Store;
-
-    leptos::task::spawn_local(async move {
-        let settings_store = Store::get("settings.json").await.unwrap();
-
-        let settings = settings_store.get_key("settings").await;
-        let settings = serde_wasm_bindgen::from_value(settings).unwrap();
-
-        set_settings.set(Some(settings));
-
-        let f = Closure::new(move |settings| {
-            let settings = serde_wasm_bindgen::from_value(settings).unwrap();
-
-            set_settings.set(Some(settings));
-        });
-
-        settings_store.on_key_change("settings", &f).await.unwrap();
-
-        f.forget();
-    });
 }
 
 async fn run_crosshair_loop<S>(
@@ -205,65 +180,4 @@ fn draw_bottom(bottom: &web_sys::HtmlElement, settings: &Settings, x: f32, y: f3
             "left": "calc({x}px - {line_thickness}rem / 2)",
         },
     );
-}
-
-mod tauri {
-    use super::*;
-
-    pub mod store {
-        use super::*;
-
-        #[wasm_bindgen]
-        extern "C" {
-            pub type Store;
-
-            #[wasm_bindgen(js_namespace = ["__TAURI__", "store"], static_method_of = Store, catch )]
-            pub async fn get(path: &str) -> Result<Store, JsValue>;
-
-            #[wasm_bindgen(method, js_name = get)]
-            pub async fn get_key(this: &Store, key: &str) -> JsValue;
-
-            #[wasm_bindgen(method, js_name = onKeyChange, catch)]
-            pub async fn on_key_change(
-                this: &Store,
-                key: &str,
-                f: &Closure<dyn FnMut(JsValue)>,
-            ) -> Result<(), JsValue>;
-        }
-    }
-
-    pub mod window {
-        use super::*;
-
-        #[wasm_bindgen]
-        extern "C" {
-            pub type PhysicalPosition;
-
-            #[wasm_bindgen(method, getter)]
-            pub fn x(this: &PhysicalPosition) -> f32;
-
-            #[wasm_bindgen(method, getter)]
-            pub fn y(this: &PhysicalPosition) -> f32;
-
-            #[wasm_bindgen(js_namespace = ["__TAURI__", "window"], js_name = cursorPosition)]
-            pub async fn get_cursor_position() -> PhysicalPosition;
-
-            pub type WebViewWindow;
-
-            #[wasm_bindgen(js_namespace = ["__TAURI__", "window"], js_name = getCurrentWindow)]
-            pub fn get_current_window() -> WebViewWindow;
-
-            #[wasm_bindgen(method, js_name = scaleFactor)]
-            async fn wb_scale_factor(this: &WebViewWindow) -> JsValue;
-
-            #[wasm_bindgen(method, js_name = innerPosition)]
-            pub async fn inner_position(this: &WebViewWindow) -> PhysicalPosition;
-        }
-
-        impl WebViewWindow {
-            pub async fn scale_factor(&self) -> f32 {
-                self.wb_scale_factor().await.as_f64().unwrap() as f32
-            }
-        }
-    }
 }

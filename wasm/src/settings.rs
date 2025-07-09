@@ -1,3 +1,10 @@
+use wasm_bindgen::prelude::Closure;
+
+use crate::tauri;
+
+pub const STORAGE_PATH: &str = "settings.json";
+pub const STORAGE_KEY: &str = "settings";
+
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Settings {
     pub line_thickness: f32,
@@ -19,10 +26,6 @@ impl Default for Settings {
 pub struct Shortcuts {
     pub show_settings: String,
     pub show_crosshair: String,
-    pub increase_line_thickness: Option<String>,
-    pub decrease_line_thickness: Option<String>,
-    pub increase_pointer_gap: Option<String>,
-    pub decrease_pointer_gap: Option<String>,
 }
 
 impl Default for Shortcuts {
@@ -30,10 +33,32 @@ impl Default for Shortcuts {
         Self {
             show_settings: "Cmd + Ctrl + KeyC".into(),
             show_crosshair: "Cmd + Alt + KeyC".into(),
-            increase_line_thickness: None,
-            decrease_line_thickness: None,
-            increase_pointer_gap: None,
-            decrease_pointer_gap: None,
         }
     }
+}
+
+pub(crate) fn subscribe_to_settings_changes<S>(set_settings: S)
+where
+    S: leptos::reactive::traits::Set<Value = Option<Settings>> + 'static,
+{
+    use tauri::store::Store;
+
+    leptos::task::spawn_local(async move {
+        let settings_store = Store::get("settings.json").await.unwrap();
+
+        let settings = settings_store.get_key("settings").await;
+        let settings = serde_wasm_bindgen::from_value(settings).unwrap();
+
+        set_settings.set(Some(settings));
+
+        let f = Closure::new(move |settings| {
+            let settings = serde_wasm_bindgen::from_value(settings).unwrap();
+
+            set_settings.set(Some(settings));
+        });
+
+        settings_store.on_key_change("settings", &f).await.unwrap();
+
+        f.forget();
+    });
 }

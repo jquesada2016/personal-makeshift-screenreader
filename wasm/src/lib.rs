@@ -5,6 +5,7 @@ extern crate serde;
 
 mod page;
 pub mod settings;
+mod tauri;
 
 use tracing_subscriber::prelude::*;
 use wasm_bindgen::prelude::*;
