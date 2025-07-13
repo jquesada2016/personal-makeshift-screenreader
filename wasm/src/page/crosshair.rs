@@ -42,10 +42,10 @@ fn Crosshair() -> impl IntoView {
 
     view! {
       <main class="h-screen">
-        <div node_ref=left class="fixed bg-gradient-to-r from-black to-white text-5xl font-bold p-4" />
-        <div node_ref=right class="fixed bg-gradient-to-l from-black to-white text-5xl font-bold p-4" />
-        <div node_ref=top class="fixed bg-gradient-to-b from-black to-white text-5xl font-bold p-4" />
-        <div node_ref=bottom class="fixed bg-gradient-to-t from-black to-white text-5xl font-bold p-4" />
+        <div node_ref=left class="fixed bg-gradient-to-r from-black to-white" />
+        <div node_ref=right class="fixed bg-gradient-to-l from-black to-white" />
+        <div node_ref=top class="fixed bg-gradient-to-b from-black to-white" />
+        <div node_ref=bottom class="fixed bg-gradient-to-t from-black to-white" />
       </main>
     }
 }
