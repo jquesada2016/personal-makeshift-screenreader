@@ -1,5 +1,15 @@
 use wasm_bindgen::prelude::*;
 
+pub mod event {
+    use super::*;
+
+    #[wasm_bindgen]
+    extern "C" {
+        #[wasm_bindgen(js_namespace = ["__TAURI__", "event"])]
+        pub fn listen(event: &str, f: &Closure<dyn FnMut()>);
+    }
+}
+
 pub mod store {
     use super::*;
 

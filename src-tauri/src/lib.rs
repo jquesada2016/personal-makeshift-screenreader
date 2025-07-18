@@ -1,7 +1,7 @@
-use tauri::Manager;
+use tauri::{Emitter, Manager};
 use tauri_plugin_global_shortcut::{GlobalShortcut, GlobalShortcutExt, ShortcutState};
 use tauri_plugin_store::{Store, StoreExt};
-use wasm::settings::{self, Settings, Shortcuts};
+use wasm::settings::{self, INVERT_CROSSHAIR_EVENT, Settings, Shortcuts};
 
 const CROSSHAIR_WINDOW_LABEL: &str = "crosshair";
 const SETTINGS_WINDOW_LABEL: &str = "settings";
@@ -45,7 +45,10 @@ fn default_json_settings() -> serde_json::Value {
 
 fn get_settings<R: tauri::Runtime>(store: &Store<R>) -> Settings {
     let settings = store.get(settings::STORAGE_KEY).unwrap();
-    serde_json::from_value::<Settings>(settings).expect("reading settings")
+    serde_json::from_value::<Settings>(settings).unwrap_or_else(|_| {
+        store.reset();
+        get_settings(store)
+    })
 }
 
 fn register_shortcuts<R: tauri::Runtime>(
@@ -55,6 +58,7 @@ fn register_shortcuts<R: tauri::Runtime>(
     let Shortcuts {
         show_settings,
         show_crosshair,
+        invert_crosshair,
     } = shortcuts;
 
     shortcuts_manager
@@ -90,9 +94,26 @@ fn register_shortcuts<R: tauri::Runtime>(
         })
         .unwrap();
 
+    shortcuts_manager
+        .on_shortcut(invert_crosshair.as_str(), |app, _, e| {
+            if e.state == ShortcutState::Released {
+                return;
+            }
+
+            let crosshair_window = get_crosshair_window(app);
+
+            if !crosshair_window.is_visible().unwrap() {
+                return;
+            }
+
+            app.emit_to(CROSSHAIR_WINDOW_LABEL, INVERT_CROSSHAIR_EVENT, &())
+                .unwrap();
+        })
+        .unwrap();
+
     #[cfg(debug_assertions)]
     shortcuts_manager
-        .on_shortcut("Cmd + Ctrl + Alt + C", |app, _, e| {
+        .on_shortcut("Cmd + Ctrl + Alt + Shift + C", |app, _, e| {
             if e.state == ShortcutState::Released {
                 return;
             }

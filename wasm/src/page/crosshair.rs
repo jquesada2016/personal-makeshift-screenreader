@@ -1,6 +1,11 @@
 mod fut;
 
-use crate::{settings::subscribe_to_settings_changes, tauri};
+use std::ops::Deref;
+
+use crate::{
+    settings::{INVERT_CROSSHAIR_EVENT, subscribe_to_settings_changes},
+    tauri,
+};
 use fut::request_animation_frame;
 use leptos::{html, prelude::*};
 use wasm_bindgen::prelude::*;
@@ -36,6 +41,13 @@ fn Crosshair() -> impl IntoView {
         let Some(right) = right else { return };
         let Some(top) = top else { return };
         let Some(bottom) = bottom else { return };
+
+        listen_for_invert_crosshair_event(
+            left.deref().clone(),
+            right.deref().clone(),
+            top.deref().clone(),
+            bottom.deref().clone(),
+        );
 
         leptos::task::spawn_local(run_crosshair_loop(settings, left, right, top, bottom));
     });
@@ -180,4 +192,34 @@ fn draw_bottom(bottom: &web_sys::HtmlElement, settings: &Settings, x: f32, y: f3
             "left": "calc({x}px - {line_thickness}rem / 2)",
         },
     );
+}
+
+fn listen_for_invert_crosshair_event(
+    left: web_sys::HtmlElement,
+    right: web_sys::HtmlElement,
+    top: web_sys::HtmlElement,
+    bottom: web_sys::HtmlElement,
+) {
+    let f = Closure::new(move || {
+        info!("received invert crosshair event");
+
+        invert_crosshair(&left, &right, &top, &bottom);
+    });
+
+    tauri::event::listen(INVERT_CROSSHAIR_EVENT, &f);
+
+    f.forget();
+}
+
+fn invert_crosshair(
+    left: &web_sys::HtmlElement,
+    right: &web_sys::HtmlElement,
+    top: &web_sys::HtmlElement,
+    bottom: &web_sys::HtmlElement,
+) {
+    for line in [left, right, top, bottom] {
+        for class in ["from-white", "from-black", "to-white", "to-black"] {
+            line.class_list().toggle(class).unwrap();
+        }
+    }
 }

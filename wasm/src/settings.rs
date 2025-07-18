@@ -4,6 +4,7 @@ use crate::tauri;
 
 pub const STORAGE_PATH: &str = "settings.json";
 pub const STORAGE_KEY: &str = "settings";
+pub const INVERT_CROSSHAIR_EVENT: &str = "invert-crosshair";
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Settings {
@@ -26,6 +27,7 @@ impl Default for Settings {
 pub struct Shortcuts {
     pub show_settings: String,
     pub show_crosshair: String,
+    pub invert_crosshair: String,
 }
 
 impl Default for Shortcuts {
@@ -33,6 +35,7 @@ impl Default for Shortcuts {
         Self {
             show_settings: "Cmd + Ctrl + KeyC".into(),
             show_crosshair: "Cmd + Alt + KeyC".into(),
+            invert_crosshair: "Cmd + Ctrl + Alt + KeyC".into(),
         }
     }
 }
