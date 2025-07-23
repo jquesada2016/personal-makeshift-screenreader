@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "npm run build:wasm && vite",
+    "dev": "npm run build:wasm:dev && vite",
     "dev:wasm": "cargo watch -C wasm -c -s 'npm run build:wasm:dev'",
-    "build": "npm run build:wasm:dev && vite build",
-    "build:wasm": "wasm-pack build --weak-refs --reference-types --target web --no-pack --release wasm",
+    "build": "npm run build:wasm && vite build",
+    "build:wasm": "wasm-pack build --weak-refs --reference-types --target web --no-pack --release --no-opt wasm",
     "build:wasm:dev": "wasm-pack build --weak-refs --reference-types --target web --no-pack --dev wasm",
     "preview": "vite preview"
   },
