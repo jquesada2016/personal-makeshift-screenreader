@@ -74,37 +74,41 @@ fn register_shortcuts<R: tauri::Runtime>(
         })
         .unwrap();
 
+    let toggle_crosshair = |crosshair_window: tauri::WebviewWindow<R>, show| {
+        if show {
+            crosshair_window.show().unwrap();
+            crosshair_window
+                .set_position(tauri::PhysicalPosition::<i32>::from((0, 0)))
+                .unwrap();
+            crosshair_window.maximize().unwrap();
+        } else {
+            crosshair_window.hide().unwrap();
+        }
+    };
+
     shortcuts_manager
-        .on_shortcut(show_crosshair.as_str(), |app, _, e| {
+        .on_shortcut(show_crosshair.as_str(), move |app, _, e| {
             if e.state == ShortcutState::Released {
                 return;
             }
 
             let crosshair_window = get_crosshair_window(app);
 
-            if crosshair_window.is_visible().unwrap() {
-                crosshair_window.hide().unwrap();
-            } else {
-                crosshair_window.show().unwrap();
-                crosshair_window
-                    .set_position(tauri::PhysicalPosition::<i32>::from((0, 0)))
-                    .unwrap();
-                crosshair_window.maximize().unwrap();
-            }
+            let show = !crosshair_window.is_visible().unwrap();
+
+            toggle_crosshair(crosshair_window, show);
         })
         .unwrap();
 
     shortcuts_manager
-        .on_shortcut(invert_crosshair.as_str(), |app, _, e| {
+        .on_shortcut(invert_crosshair.as_str(), move |app, _, e| {
             if e.state == ShortcutState::Released {
                 return;
             }
 
             let crosshair_window = get_crosshair_window(app);
 
-            if !crosshair_window.is_visible().unwrap() {
-                return;
-            }
+            toggle_crosshair(crosshair_window, true);
 
             app.emit_to(CROSSHAIR_WINDOW_LABEL, INVERT_CROSSHAIR_EVENT, &())
                 .unwrap();
