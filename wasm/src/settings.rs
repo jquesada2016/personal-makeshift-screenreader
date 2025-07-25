@@ -32,10 +32,20 @@ pub struct Shortcuts {
 
 impl Default for Shortcuts {
     fn default() -> Self {
-        Self {
-            show_settings: "Cmd + Ctrl + KeyC".into(),
-            show_crosshair: "Cmd + Alt + KeyC".into(),
-            invert_crosshair: "Cmd + Ctrl + Alt + KeyC".into(),
+        if cfg!(target_os = "windows") {
+            Self {
+                show_settings: "Ctrl + Alt + KeyC".into(),
+                show_crosshair: "Super + Alt + KeyC".into(),
+                invert_crosshair: "Super + Ctrl + Alt + KeyC".into(),
+            }
+        } else if cfg!(target_os = "macos") {
+            Self {
+                show_settings: "Cmd + Ctrl + KeyC".into(),
+                show_crosshair: "Cmd + Alt + KeyC".into(),
+                invert_crosshair: "Cmd + Ctrl + Alt + KeyC".into(),
+            }
+        } else {
+            unimplemented!()
         }
     }
 }
